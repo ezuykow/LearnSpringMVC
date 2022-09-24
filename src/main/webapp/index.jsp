@@ -1,7 +1,7 @@
 <html>
 <body>
-<h2>Hello World!</h2>
+<h2>Index</h2>
 <br/>
-<a href="/startcalc">Go to calc!</a>
+<a href="/people">Go to people page!</a>
 </body>
 </html>

@@ -1,3 +1,4 @@
-#LearnSpringMVC (Branch #2.hw_calculator)
+#LearnSpringMVC (Branch #4._upgrade_CRUD)
 
-Simple web calculator :)
+OLD: Simple CRUD-app without DB (using ArrayList)
+NEW: Added a functional to create new person
