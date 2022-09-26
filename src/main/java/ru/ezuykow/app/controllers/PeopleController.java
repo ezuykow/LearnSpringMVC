@@ -3,9 +3,12 @@ package ru.ezuykow.app.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.ezuykow.app.dao.PeopleDAO;
 import ru.ezuykow.app.models.Person;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/people")
@@ -36,7 +39,11 @@ public class PeopleController {
     }
 
     @PostMapping()
-    public String addPerson(@ModelAttribute("person") Person person) {
+    public String addPerson(@Valid @ModelAttribute("person") Person person,
+                            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "people/new";
+        }
         people.add(person);
         return "redirect:/people";
     }
@@ -50,7 +57,12 @@ public class PeopleController {
 
     @PatchMapping("/{id}")
     public String update(@PathVariable("id") int id,
-                         @ModelAttribute("person") Person person) {
+                         @Valid @ModelAttribute("person") Person person,
+                         BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "people/edit";
+        }
+
         people.update(id, person);
         return "redirect:/people";
     }
