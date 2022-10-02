@@ -9,7 +9,6 @@ import java.util.List;
 
 @Component
 public class PeopleDAO {
-    private static int PEOPLE_COUNT;
     private static final String DB_URL = "jdbc:postgresql://localhost:5432/first_db";
     private static final String DB_USERNAME = "ezuykow";
     private static final String DB_PASSWORD = "579940974";
@@ -37,7 +36,6 @@ public class PeopleDAO {
             Statement statement = connection.createStatement();
             final String SQL = "SELECT * FROM person";
             ResultSet resultSet = statement.executeQuery(SQL);
-
             while (resultSet.next()) {
                 var p = new Person();
 
@@ -57,31 +55,63 @@ public class PeopleDAO {
     }
 
     public Person show(int id) {
-        return null;
+        Person person = null;
+
+        try {
+            PreparedStatement ps =
+                    connection.prepareStatement("SELECT * FROM person WHERE id=?");
+            ps.setInt(1, id);
+
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+
+            person = new Person();
+            person.setId(rs.getInt("id"));
+            person.setName(rs.getString("name"));
+            person.setEmail(rs.getString("email"));
+            person.setAge(rs.getInt("age"));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return person;
     }
 
     public void add(Person p) {
         try {
-            Statement statement = connection.createStatement();
-            final String SQL = "INSERT INTO person VALUES (" +
-                    p.getId() +
-                    ", '" + p.getName() +
-                    "' , '" + p.getEmail() +
-                    "' , " + p.getAge() +
-                    ");";
-            statement.executeUpdate(SQL);
+            PreparedStatement ps =
+                    connection.prepareStatement("INSERT INTO person VALUES (?, ?, ?, ?)");
+            ps.setInt(1, p.getId());
+            ps.setString(2, p.getName());
+            ps.setString(3, p.getEmail());
+            ps.setInt(4, p.getAge());
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void update(int id, Person updatedPerson) {
-        Person oldPerson = show(id);
-        oldPerson.setName(updatedPerson.getName());
-        oldPerson.setAge(updatedPerson.getAge());
-        oldPerson.setEmail(updatedPerson.getEmail());
+        try {
+            PreparedStatement ps =
+                    connection.prepareStatement("UPDATE person SET name=?, email=?, age=? WHERE id=?");
+            ps.setString(1, updatedPerson.getName());
+            ps.setString(2, updatedPerson.getEmail());
+            ps.setInt(3, updatedPerson.getAge());
+            ps.setInt(4, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void delete(int id) {
+        try {
+            PreparedStatement ps =
+                    connection.prepareStatement("DELETE FROM person WHERE id=?");
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
