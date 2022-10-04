@@ -72,4 +72,10 @@ public class PeopleController {
         people.delete(id);
         return "redirect:/people";
     }
+
+    @GetMapping("/test_batch")
+    public String testBatchAdd() {
+        people.add10Person();
+        return "redirect:/people";
+    }
 }

@@ -1,6 +1,7 @@
 package ru.ezuykow.app.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -50,5 +51,28 @@ public class PeopleDAO {
 
     public void delete(int id) {
         jdbcTemplate.update("DELETE FROM person WHERE id=?", id);
+    }
+
+    public void add10Person() {
+        List<Person> newPersons = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            newPersons.add(new Person(i, "Name" + i, "name" + i + "@mail.ru", 30));
+        }
+
+        jdbcTemplate.update("INSERT INTO person VALUES (?, ?, ?, ?)",
+                new BatchPreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        ps.setInt(1, newPersons.get(i).getId());
+                        ps.setString(2, newPersons.get(i).getName());
+                        ps.setString(3, newPersons.get(i).getEmail());
+                        ps.setInt(4, newPersons.get(i).getAge());
+                    }
+
+                    @Override
+                    public int getBatchSize() {
+                        return newPersons.size();
+                    }
+                });
     }
 }
