@@ -59,7 +59,7 @@ public class PeopleDAO {
             newPersons.add(new Person(i, "Name" + i, "name" + i + "@mail.ru", 30));
         }
 
-        jdbcTemplate.update("INSERT INTO person VALUES (?, ?, ?, ?)",
+        jdbcTemplate.batchUpdate("INSERT INTO person VALUES (?, ?, ?, ?)",
                 new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
